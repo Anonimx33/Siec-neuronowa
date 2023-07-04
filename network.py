@@ -48,8 +48,8 @@ class Network:
         errors = []
         delta = cost_derivative * sigmoid_derivative
         errors.insert(0, delta) 
-        for layer_index in range(len(self.layers) - 2, -1, -1):
-            cost_derivative = np.dot(self.layers[layer_index+1].weights.T, delta)
+        for layer_index in reversed(range(len(self.layers)-1)):
+            cost_derivative = np.dot(self.layers[layer_index + 1].weights.T, delta)
             sigmoid_derivative = deriative_sigmoid_test(self.layers[layer_index].z)
             delta = cost_derivative * sigmoid_derivative
             errors.insert(0, delta)
@@ -119,7 +119,6 @@ class Network:
         biases = np.array([layer.biases for layer in self.layers])
         np.save(f'{folder_name}/weights.npy', weights)
         np.save(f'{folder_name}/biases.npy', biases)
-
     
     def loss(self, y_true, y_pred):
         return np.mean((y_true - y_pred)**2)
@@ -160,9 +159,10 @@ def main():
     test_data = prepare_data(test_images, test_labels)
     np.random.shuffle(test_data)
 
-    number_of_epochs = 5
-    batch_size = 10
-    
+    number_of_epochs = 10
+    batch_size = 15
+    test_cost = np.empty([0,1])
+    train_cost = np.empty([0,1])
     for epoch in range(number_of_epochs):
         print(f"Epoch {epoch}")
         for i in range(0, len(train_data) - batch_size, batch_size):
@@ -178,17 +178,32 @@ def main():
         cost_sum = 0
         for _, number in enumerate(train_data):
             pixels, number_label = number
+            output = network.feed_forward(pixels)
+            result: int = int(number_label)
             results: np.array = make_output(number_label)
             cost_sum += network.final_cost(results)
-        train_cost = cost_sum / len(train_data)
-        print(train_cost)
-
+        cost = cost_sum / len(train_data)
+        print(cost)
+        train_cost = np.append(train_cost, cost)
         for _, number in enumerate(test_data):
             pixels, number_label = number
+            output = network.feed_forward(pixels)
+            result: int = int(number_label)
             results: np.array = make_output(number_label)
             cost_sum += network.final_cost(results)
-        test_cost = cost_sum / len(test_data)
-        print(test_cost)
+        cost = cost_sum / len(test_data)
+        print(cost)
+        test_cost = np.append(test_cost, cost)
+    x = np.linspace(0,number_of_epochs, number_of_epochs)
+    print(test_cost)
+    plt.plot(x, train_cost,'-b', label="train data")
+    plt.plot(x, test_cost,'-r', label="test data")
+    plt.title("Cost for train and test data")
+    plt.xlabel("Number of epochs")
+    plt.ylabel("Cost")
+    plt.legend(loc="upper right")
+    plt.show()
+
 
 if __name__ == "__main__":
     main()
