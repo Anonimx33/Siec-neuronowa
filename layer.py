@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Layer:
     def __init__(self, number_of_neurons, number_of_inputs, activation_function, deriative_function):
         self.number_of_neurons = number_of_neurons

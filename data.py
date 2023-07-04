@@ -7,6 +7,7 @@ PATH_TRAIN_LABELS = "wsi/data/train-labels-idx1-ubyte"
 PATH_TEST_IMAGES = "wsi/data/t10k-images-idx3-ubyte"
 PATH_TEST_LABELS = "wsi/data/t10k-labels-idx1-ubyte"
 
+
 COL_SIZE = 28
 
 def load_datasets(set_name="train"):

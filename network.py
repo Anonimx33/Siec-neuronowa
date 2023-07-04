@@ -4,6 +4,7 @@ from mlxtend.data import loadlocal_mnist
 import data
 from functools import partial
 
+
 from layer import Layer
 
 PATH_TRAIN_IMAGES = "data/train-images-idx3-ubyte"
